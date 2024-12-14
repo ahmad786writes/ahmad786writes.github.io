@@ -1235,3 +1235,48 @@ section {
 #footer .credits {
   font-size: 13px;
 }
+
+/*--------------------------------------------------------------
+# Certification
+--------------------------------------------------------------*/
+
+.certifications {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Maximum of 3 items per row */
+  gap: 20px;  /* Consistent space between items */
+}
+
+.certification-item {
+  text-align: center;
+}
+
+.certification-image {
+  max-width: 100%; /* Ensure images scale within their containers */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 8px; /* Optional: adds a nice rounded border to the images */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.certification-image:hover {
+  transform: scale(1.1); /* Scale effect on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Shadow effect on hover */
+}
+
+.certification-title {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 18px; /* Larger font size for readability */
+  color: #333; /* Darker color for contrast */
+}
+
+@media (max-width: 768px) {
+  .certifications {
+    grid-template-columns: repeat(2, 1fr); /* 2 items per row on medium screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .certifications {
+    grid-template-columns: 1fr; /* 1 item per row on small screens */
+  }
+}
