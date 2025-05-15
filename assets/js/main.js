@@ -27,7 +27,27 @@
       }
     }
   }
-
+  /**
+   * Hero Animation
+   */
+  window.addEventListener("DOMContentLoaded", () => {
+    VANTA.NET({
+      el: "#hero",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: true,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0x1F51FF, // Cyan nodes
+      backgroundColor: 0x0d0d0d, // Dark background
+      points: 12.00,
+      maxDistance: 20.00,
+      spacing: 15.00
+    });
+  });
+  
   /**
    * Easy on scroll event listener 
    */
@@ -162,6 +182,45 @@
       }
     })
   }
+
+
+  const blogContainer = document.getElementById('blog-posts');
+  const mediumRSS = 'https://medium.com/feed/@ahmad786.writes'; // your medium username
+
+  function extractImage(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    const img = div.querySelector('img');
+    return img ? img.src : 'https://via.placeholder.com/150'; // fallback image
+  }
+
+  fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumRSS)}`)
+  .then(response => response.json())
+  .then(data => {
+    const posts = data.items.slice(0, 5);
+    let html = '';
+    posts.forEach(post => {
+      const imgSrc = extractImage(post.description);
+      html += `
+        <div class="col-12 col-md-6 col-lg-4">
+          <article class="blog-post card h-100 p-2">
+            <img src="${imgSrc}" class="card-img-top blog-img" alt="Blog image" />
+            <div class="card-body p-3 d-flex flex-column">
+              <h3 class="card-title"><a href="${post.link}" target="_blank" rel="noopener">${post.title}</a></h3>
+              <p class="card-text">${post.description.replace(/<[^>]+>/g, '').substring(0, 100)}...</p>
+              <small class="text-muted mt-auto">Published on: ${new Date(post.pubDate).toLocaleDateString()}</small>
+            </div>
+          </article>
+        </div>
+      `;
+    });
+    blogContainer.innerHTML = html;
+  })
+  .catch(err => {
+    blogContainer.innerHTML = '<p>Unable to load blogs at the moment.</p>';
+    console.error('Failed to fetch Medium posts:', err);
+  });
+
 
   /**
    * Porfolio isotope and filter
