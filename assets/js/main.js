@@ -321,4 +321,114 @@
    */
   new PureCounter();
 
+/* === CHATBOT FUNCTIONALITY === */
+
+// Sound effect for new bot message
+const botSound = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
+
+// Show/hide notification dot
+function showNotificationDot() {
+  const dot = document.getElementById('notification-dot');
+  if (dot) dot.style.display = 'block';
+}
+
+function hideNotificationDot() {
+  const dot = document.getElementById('notification-dot');
+  if (dot) dot.style.display = 'none';
+}
+
+// Check if user is at the bottom of chat
+function isScrolledToBottom() {
+  const chatBody = document.getElementById('chat-body');
+  return chatBody.scrollTop + chatBody.clientHeight >= chatBody.scrollHeight - 20;
+}
+
+window.toggleChat = function () {
+  const chatWidget = document.getElementById('chat-widget');
+  const chatBody = document.getElementById('chat-body');
+
+  if (chatWidget) {
+    const isOpening = chatWidget.style.display === 'none' || chatWidget.style.display === '';
+
+    chatWidget.style.display = isOpening ? 'flex' : 'none';
+
+    if (isOpening) {
+      hideNotificationDot(); // Hide dot when chat opens
+    }
+
+    // Show system message only the first time
+    if (isOpening && !chatBody.dataset.initialized) {
+      const systemMessage = document.createElement('div');
+      systemMessage.className = 'bot-message';
+      systemMessage.textContent = "I am Ahmad's AI assistant, how can I help you today?";
+      chatBody.appendChild(systemMessage);
+      chatBody.dataset.initialized = true;
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  }
+};
+
+const sendBtn = document.getElementById('send-btn');
+if (sendBtn) {
+  sendBtn.addEventListener('click', async () => {
+    const userInputElem = document.getElementById('user-input');
+    const userInput = userInputElem.value.trim();
+    if (!userInput) return;
+
+    const chatBody = document.getElementById('chat-body');
+    const userMessage = document.createElement('div');
+    userMessage.className = 'user-message';
+    userMessage.textContent = userInput;
+    chatBody.appendChild(userMessage);
+
+    userInputElem.value = '';
+
+    try {
+      const response = await fetch('https://ahmad-rag-chatbot.onrender.com/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: userInput })
+      });
+
+      const data = await response.json();
+      const botMessage = document.createElement('div');
+      botMessage.className = 'bot-message';
+      botMessage.textContent = data.response;
+      chatBody.appendChild(botMessage);
+
+      botSound.play(); // 🔊 Play sound on bot message
+
+      const chatWidget = document.getElementById('chat-widget');
+      if (chatWidget.style.display === 'none' || !isScrolledToBottom()) {
+        showNotificationDot(); // 🔴 Show notification if chat is closed or user is scrolled up
+      }
+
+      // Auto-scroll if at bottom
+      if (isScrolledToBottom()) {
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
+}
+
+// Enter key sends message (except Shift+Enter for new line)
+const userInputElem = document.getElementById('user-input');
+if (userInputElem && sendBtn) {
+  userInputElem.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault(); // Prevent newline
+      sendBtn.click();        // Trigger send button click handler
+    }
+  });
+}
+
+// Hide dot when user scrolls to bottom
+document.getElementById('chat-body').addEventListener('scroll', () => {
+  if (isScrolledToBottom()) {
+    hideNotificationDot();
+  }
+});
+
 })()
