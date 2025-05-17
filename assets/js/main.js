@@ -360,7 +360,7 @@ window.toggleChat = function () {
     if (isOpening && !chatBody.dataset.initialized) {
       const systemMessage = document.createElement('div');
       systemMessage.className = 'bot-message';
-      systemMessage.textContent = "I am Ahmad's AI assistant, how can I help you today?(Due to High Server Load, You might have to wait for 50 to 55 Seconds for the first answer, Thanks)";
+      systemMessage.textContent = "I am Ahmad's AI assistant, how can I help you today? (Due to High Server Load, You might have to wait for 50 to 55 Seconds for the first answer, Thanks)";
       chatBody.appendChild(systemMessage);
       chatBody.dataset.initialized = true;
       chatBody.scrollTop = chatBody.scrollHeight;
