@@ -1516,8 +1516,9 @@ section {
     box-shadow: 0 0 6px 2px #ff4d4d;
   }
   @media (max-width: 600px) {
+
   #chat-toggle {
-    bottom: 20px;
+    bottom: 80px;
     right: 10px;
     padding: 10px 16px;
     font-size: 0.9rem;
